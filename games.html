@@ -95,8 +95,10 @@ body{
 
 <main class="viewport" id="tapZone">
   <div class="hero-wrap">
-    <img id="hero"
-     src="https://raw.githubusercontent.com/CUBERIONAI/Matisov-X-/ec2f8b52d25750ccb90f4afb2c2666c455b98407/IMG_20260205_104400_997_105248.jpg">
+    <img
+      id="hero"
+      src="https://raw.githubusercontent.com/CUBERIONAI/Matisov-X/main/file_0000000008b471f48ebdb6f35b1b1a5a.png"
+      alt="Hero">
   </div>
 </main>
 
@@ -115,16 +117,9 @@ body{
 <script>
 Telegram.WebApp.expand();
 
-const cfg={
-  tap:12,
-  maxE:1000,
-  regen:3
-};
+const cfg={ tap:12, maxE:1000, regen:3 };
 
-let st={
-  bal:5046656,
-  e:1000
-};
+let st={ bal:5046656, e:1000 };
 
 const hero=document.getElementById('hero');
 const zone=document.getElementById('tapZone');
@@ -143,7 +138,6 @@ function tap(e){
   setTimeout(()=>hero.style.transform="",120);
 
   fx(t.clientX,t.clientY);
-
   Telegram.WebApp.HapticFeedback?.impactOccurred("medium");
   ui();
 }
@@ -190,4 +184,4 @@ ui();
 </script>
 
 </body>
-  </html>
+</html>
