@@ -12,8 +12,8 @@
 :root{
   --neon:#00d2ff;
   --bg:#02040a;
-  --accent:#0ff;
 }
+
 body{
   margin:0;
   background:radial-gradient(circle at 50% 30%, #0b2a44, var(--bg));
@@ -24,27 +24,22 @@ body{
 
 /* ===== HEADER ===== */
 header{
-  display:flex; justify-content:space-between; align-items:center;
-  padding:1rem;
-  z-index:50;
   position:relative;
+  z-index:50;
 }
-#title{
-  font-size:1.5rem; font-weight:900; color:var(--neon);
+.header-title{
+  text-align:center;
+  font-size:1.5rem;
+  font-weight:900;
+  margin-top:10px;
+  color:var(--neon);
+  text-shadow:0 0 10px var(--neon);
 }
-#bal{
-  font-size:2rem; font-weight:700; margin-left:0.5rem;
-}
-#upgradeBtn{
-  padding:0.5rem 1rem; background:var(--neon)/20; border:1px solid var(--neon);
-  border-radius:1rem; cursor:pointer; transition:0.2s;
-}
-#upgradeBtn:hover{background:var(--neon)/40;}
 
 /* ===== SCENE ===== */
 .viewport{
   position:relative;
-  height:60vh;
+  height:55vh;
   overflow:hidden;
 }
 .cyber-floor{
@@ -101,70 +96,73 @@ header{
   pointer-events:none;
 }
 
-/* ===== ENERGY BAR ===== */
+/* ===== UI PANELS ===== */
+.panel{
+  position:fixed;
+  bottom:0;
+  left:0;
+  width:100%;
+  background:rgba(0,0,0,0.7);
+  backdrop-filter:blur(15px);
+  border-top:1px solid rgba(0,210,255,0.3);
+  padding:10px;
+  display:flex;
+  justify-content:space-around;
+  z-index:50;
+}
+button{
+  background:rgba(0,0,0,0.6);
+  color:#00d2ff;
+  font-weight:700;
+  border-radius:10px;
+  padding:5px 10px;
+  text-align:center;
+  border:1px solid #00d2ff;
+}
+#upgradeMenu{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.95);
+  display:none;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  z-index:100;
+}
+.upgrade-btn{
+  width:80%;
+  margin:10px 0;
+  padding:15px;
+  font-size:1rem;
+  cursor:pointer;
+}
+
+/* ENERGY BAR */
 .energy-wrap{
-  padding:1rem;
+  margin:10px;
 }
 .energy-bar{
-  height:1rem;
+  height:8px;
   background:#000;
-  border-radius:999px;
+  border-radius:10px;
   overflow:hidden;
 }
 .energy-fill{
   height:100%;
-  background:linear-gradient(to right, cyan, blue);
+  background:linear-gradient(to right,#00d2ff,#00ffff);
+  width:100%;
   transition:width 0.3s;
 }
-
-/* ===== UPGRADE MENU ===== */
-#upgradeMenu{
-  position:fixed; top:0; left:0; width:100%; height:100%;
-  background:rgba(0,0,0,0.85);
-  display:none;
-  flex-direction:column;
-  z-index:100;
-  backdrop-filter:blur(10px);
-}
-.menu-header{
-  display:flex; justify-content:space-between; align-items:center;
-  padding:1rem; border-bottom:1px solid var(--neon);
-}
-.menu-title{font-size:1.2rem; font-weight:900;}
-.closeBtn{
-  cursor:pointer; font-size:1.2rem; padding:0.2rem 0.5rem; border:1px solid var(--neon); border-radius:0.5rem;
-  transition:0.2s;
-}
-.closeBtn:hover{background:var(--neon)/20;}
-.menu-tabs{
-  display:flex; justify-content:space-around; margin:1rem 0;
-}
-.tab{
-  padding:0.5rem 1rem; cursor:pointer; border-bottom:2px solid transparent;
-  transition:0.2s; font-weight:700;
-}
-.tab.active{border-color:var(--neon);}
-.tab-content{
-  flex:1;
-  padding:1rem;
-  display:none;
-  flex-direction:column;
-  gap:1rem;
-}
-.tab-content.active{display:flex;}
-.upgrade-btn{
-  padding:0.5rem 1rem; background:var(--neon)/20; border:1px solid var(--neon);
-  border-radius:0.5rem; cursor:pointer; transition:0.2s;
-}
-.upgrade-btn:hover{background:var(--neon)/40;}
 </style>
 </head>
 <body>
 <header>
-  <div id="title">Matisov X</div>
-  <div>
-    <span id="bal">5,046,656</span> MX
-    <button id="upgradeBtn">Upgrade</button>
+  <div class="header-title">Matisov X</div>
+  <div class="text-center mt-2">
+    <span id="bal" class="text-3xl font-black">5,046,656</span> MX
   </div>
 </header>
 
@@ -172,81 +170,100 @@ header{
   <div class="cyber-floor"></div>
   <div class="hero-wrap">
     <img id="hero"
-    src="https://raw.githubusercontent.com/CUBERIONAI/Matisov-X/main/file_0000000008b471f48ebdb6f35b1b1a5a.png">
+      src="https://raw.githubusercontent.com/CUBERIONAI/Matisov-X/main/file_0000000008b471f48ebdb6f35b1b1a5a.png">
   </div>
 </main>
 
 <div class="energy-wrap">
-  <div class="flex justify-between text-xs mb-1">⚡ Energy <span id="energyText">1000/1000</span></div>
-  <div class="energy-bar"><div id="energyFill" class="energy-fill" style="width:100%"></div></div>
+  <div class="flex justify-between text-xs px-4">
+    <span>⚡ Energy</span>
+    <span id="energyText">1000 / 1000</span>
+  </div>
+  <div class="energy-bar mx-4">
+    <div id="energyBar" class="energy-fill"></div>
+  </div>
+</div>
+
+<!-- PANEL -->
+<div class="panel">
+  <button onclick="toggleUpgradeMenu()">Upgrades</button>
+  <button onclick="inviteFriend()">Invite Friend</button>
 </div>
 
 <!-- UPGRADE MENU -->
 <div id="upgradeMenu">
-  <div class="menu-header">
-    <div class="menu-title">Upgrade Menu</div>
-    <div class="closeBtn" id="closeMenu">Back</div>
-  </div>
-  <div class="menu-tabs">
-    <div class="tab active" data-tab="energy">Energy</div>
-    <div class="tab" data-tab="sword">Sword</div>
-    <div class="tab" data-tab="ai">AI Magic</div>
-    <div class="tab" data-tab="blockchain">Blockchain</div>
-  </div>
-  <div class="tab-content active" id="energy">
-    <div>Energy Boost: <span id="levelEnergy">1</span> - Cost: <span id="costEnergy">500</span> MX
-      <button class="upgrade-btn" data-upgrade="energy">Upgrade</button>
-    </div>
-  </div>
-  <div class="tab-content" id="sword">
-    <div>Sword Power: <span id="levelSword">1</span> - Cost: <span id="costSword">800</span> MX
-      <button class="upgrade-btn" data-upgrade="sword">Upgrade</button>
-    </div>
-  </div>
-  <div class="tab-content" id="ai">
-    <div>AI Multitap: <span id="levelAI">1</span> - Cost: <span id="costAI">1200</span> MX
-      <button class="upgrade-btn" data-upgrade="ai">Upgrade</button>
-    </div>
-  </div>
-  <div class="tab-content" id="blockchain">
-    <div>Blockchain Eco: <span id="levelBC">1</span> - Cost: <span id="costBC">2000</span> MX
-      <button class="upgrade-btn" data-upgrade="blockchain">Upgrade</button>
-    </div>
-  </div>
+  <button class="upgrade-btn" id="tapUpgrade" onclick="buyUpgrade('tap')">Tap Power Lv.1 - 5000 MX</button>
+  <button class="upgrade-btn" id="energyUpgrade" onclick="buyUpgrade('energy')">Hyper Arms Lv.1 - 5000 MX</button>
+  <button class="upgrade-btn" id="aiUpgrade" onclick="buyUpgrade('ai')">AI Magic Lv.1 - 10000 MX</button>
+  <button class="upgrade-btn" onclick="toggleUpgradeMenu()">Close</button>
 </div>
 
 <script>
 Telegram.WebApp.expand();
 
+// ======================
+// GAME CONFIG
+// ======================
 const cfg={tap:12,maxE:1000,regen:3};
-let st={bal:5046656,e:1000};
 
-// HERO TAP FX
+// ======================
+// GAME STATE
+// ======================
+let state={
+  bal:parseInt(localStorage.getItem('mx_bal'))||5046656,
+  e:1000,
+  upgrades:{tap:{level:1,cost:5000},energy:{level:1,cost:5000},ai:{level:1,cost:10000}},
+  referralBonus:25000,
+  referrals:JSON.parse(localStorage.getItem('referrals'))||[]
+};
+
+// ======================
+// ELEMENTS
+// ======================
 const hero=document.getElementById('hero');
 const zone=document.getElementById('tapZone');
+
+// ======================
+// TAP EVENT
+// ======================
 zone.addEventListener('touchstart',tap,{passive:false});
 zone.addEventListener('mousedown',tap);
 
 function tap(e){
   e.preventDefault();
-  if(st.e<cfg.tap)return;
-  const x=(e.touches?e.touches[0].clientX:e.clientX);
-  const y=(e.touches?e.touches[0].clientY:e.clientY);
-  st.e-=cfg.tap; st.bal+=cfg.tap;
+  if(state.e<cfg.tap)return;
 
+  const x=e.touches?e.touches[0].clientX:e.clientX;
+  const y=e.touches?e.touches[0].clientY:e.clientY;
+
+  state.e-=cfg.tap;
+  let totalTap=cfg.tap+state.upgrades.tap.level*5;
+
+  for(let i=0;i<state.upgrades.ai.level;i++){
+    totalTap+=cfg.tap;
+    renderTapEffect(x+i*10,y-i*10,cfg.tap);
+  }
+
+  state.bal+=totalTap;
   hero.style.transform="scale(.9) rotate(-3deg)";
   setTimeout(()=>hero.style.transform="",120);
-  fx(x,y);
+
+  renderTapEffect(x,y,cfg.tap);
+
   Telegram.WebApp.HapticFeedback?.impactOccurred("medium");
-  ui();
+  updateUI();
+  localStorage.setItem('mx_bal',state.bal);
 }
 
-function fx(x,y){
+// ======================
+// TAP EFFECTS
+// ======================
+function renderTapEffect(x,y,amount){
   const txt=document.createElement('div');
   txt.className='tap-text';
   txt.style.left=x+'px';
   txt.style.top=y+'px';
-  txt.textContent='+'+cfg.tap+' MX';
+  txt.textContent='+'+amount+' MX';
   document.body.appendChild(txt);
   setTimeout(()=>txt.remove(),600);
 
@@ -256,89 +273,70 @@ function fx(x,y){
     s.style.left=x+'px';
     s.style.top=y+'px';
     document.body.appendChild(s);
-
     const dx=(Math.random()-.5)*300;
     const dy=(Math.random()-.5)*300;
-    s.animate([{transform:'translate(0,0)',opacity:1},{transform:`translate(${dx}px,${dy}px)`,opacity:0}],{duration:500}).onfinish=()=>s.remove();
+    s.animate([{transform:'translate(0,0)',opacity:1},{transform:`translate(${dx}px,${dy}px)`,opacity:0}],
+      {duration:500}).onfinish=()=>s.remove();
   }
 }
 
-// ENERGY REGEN
-setInterval(()=>{
-  if(st.e<cfg.maxE){
-    st.e=Math.min(cfg.maxE,st.e+cfg.regen);
-    ui();
+// ======================
+// UI UPDATE
+// ======================
+function updateUI(){
+  document.getElementById('bal').textContent=state.bal.toLocaleString();
+  document.getElementById('energyText').textContent=`${state.e} / ${cfg.maxE}`;
+  document.getElementById('energyBar').style.width=(state.e/cfg.maxE*100)+'%';
+  document.getElementById('tapUpgrade').textContent=`Tap Power Lv.${state.upgrades.tap.level} - ${state.upgrades.tap.cost} MX`;
+  document.getElementById('energyUpgrade').textContent=`Hyper Arms Lv.${state.upgrades.energy.level} - ${state.upgrades.energy.cost} MX`;
+  document.getElementById('aiUpgrade').textContent=`AI Magic Lv.${state.upgrades.ai.level} - ${state.upgrades.ai.cost} MX`;
+}
+
+// ======================
+// UPGRADE LOGIC
+// ======================
+function buyUpgrade(type){
+  const up=state.upgrades[type];
+  if(state.bal>=up.cost){
+    state.bal-=up.cost;
+    up.level+=1;
+    up.cost=Math.floor(up.cost*1.6);
+    localStorage.setItem('mx_bal',state.bal);
+    updateUI();
+  } else alert("Not enough MX");
+}
+
+function toggleUpgradeMenu(){
+  const m=document.getElementById('upgradeMenu');
+  m.style.display=(m.style.display==='flex')?'none':'flex';
+}
+
+// ======================
+// REFERRAL SYSTEM
+// ======================
+function inviteFriend(){
+  const refId=prompt("Enter friend ID to claim referral:");
+  if(refId) claimReferral(refId);
+}
+function claimReferral(refId){
+  if(!state.referrals.includes(refId)){
+    state.bal+=state.referralBonus;
+    state.referrals.push(refId);
+    localStorage.setItem('mx_bal',state.bal);
+    localStorage.setItem('referrals',JSON.stringify(state.referrals));
+    alert(`Referral claimed! +${state.referralBonus} MX`);
+    updateUI();
   }
+}
+
+// ======================
+// ENERGY REGEN
+// ======================
+setInterval(()=>{
+  if(state.e<cfg.maxE){state.e=Math.min(cfg.maxE,state.e+cfg.regen);updateUI();}
 },1000);
 
-// UI UPDATE
-function ui(){
-  document.getElementById('bal').textContent=st.bal.toLocaleString();
-  document.getElementById('energyText').textContent=`${st.e}/${cfg.maxE}`;
-  document.getElementById('energyFill').style.width=(st.e/cfg.maxE*100)+'%';
-}
-ui();
-
-// UPGRADE SYSTEM
-const upgradeBtn=document.getElementById('upgradeBtn');
-const upgradeMenu=document.getElementById('upgradeMenu');
-const closeMenu=document.getElementById('closeMenu');
-
-upgradeBtn.addEventListener('click',()=>{upgradeMenu.style.display='flex';});
-closeMenu.addEventListener('click',()=>{upgradeMenu.style.display='none';});
-
-// TABS
-const tabs=document.querySelectorAll('.tab');
-const tabContents=document.querySelectorAll('.tab-content');
-tabs.forEach(t=>{
-  t.addEventListener('click',()=>{
-    tabs.forEach(x=>x.classList.remove('active'));
-    t.classList.add('active');
-    const target=t.dataset.tab;
-    tabContents.forEach(c=>c.classList.remove('active'));
-    document.getElementById(target).classList.add('active');
-  });
-});
-
-// UPGRADE LOGIC
-let upgrades={
-  energy:{level:1,cost:500},
-  sword:{level:1,cost:800},
-  ai:{level:1,cost:1200},
-  blockchain:{level:1,cost:2000}
-};
-
-document.querySelectorAll('.upgrade-btn').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    const type=btn.dataset.upgrade;
-    if(st.bal>=upgrades[type].cost){
-      st.bal-=upgrades[type].cost;
-      upgrades[type].level++;
-      
-      upgrades[type].cost=Math.floor(upgrades[type].cost*1.5);
-      // Apply effect
-      if(type==='energy') cfg.maxE+=50;
-      if(type==='sword') cfg.tap+=5;
-      if(type==='ai') cfg.tap+=2; // simple multitap bonus
-      if(type==='blockchain') st.bal+=100; // small passive bonus
-      updateUpgradeUI();
-      ui();
-    }else alert('Not enough MX!');
-  });
-});
-
-function updateUpgradeUI(){
-  document.getElementById('levelEnergy').textContent=upgrades.energy.level;
-  document.getElementById('costEnergy').textContent=upgrades.energy.cost;
-  document.getElementById('levelSword').textContent=upgrades.sword.level;
-  document.getElementById('costSword').textContent=upgrades.sword.cost;
-  document.getElementById('levelAI').textContent=upgrades.ai.level;
-  document.getElementById('costAI').textContent=upgrades.ai.cost;
-  document.getElementById('levelBC').textContent=upgrades.blockchain.level;
-  document.getElementById('costBC').textContent=upgrades.blockchain.cost;
-}
-
-updateUpgradeUI();
+updateUI();
 </script>
 </body>
-</html>.
+</html>
