@@ -1,290 +1,208 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Matisov X | Cyber Samurai Engine</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;900&display=swap');
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Matisov X — Cyber Samurai</title>
 
-        :root {
-            --neon-blue: #00d2ff;
-            --deep-space: #020205;
-            --accent-glow: rgba(0, 210, 255, 0.4);
-        }
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
 
-        body {
-            background-color: var(--deep-space);
-            color: white;
-            font-family: 'Orbitron', sans-serif;
-            margin: 0;
-            overflow: hidden;
-            touch-action: manipulation;
-        }
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
 
-        /* ENGINE 3D SCENE */
-        .viewport {
-            position: relative;
-            width: 100%;
-            height: 60vh;
-            perspective: 1500px;
-            overflow: hidden;
-            background: radial-gradient(circle at 50% 50%, #0a1f3d 0%, var(--deep-space) 100%);
-        }
+:root{
+  --neon:#00d2ff;
+  --bg:#02040a;
+}
 
-        .world-grid {
-            position: absolute;
-            width: 300%;
-            height: 300%;
-            bottom: -150%;
-            left: -100%;
-            background-image: 
-                linear-gradient(var(--accent-glow) 1px, transparent 1px),
-                linear-gradient(90deg, var(--accent-glow) 1px, transparent 1px);
-            background-size: 80px 80px;
-            transform: rotateX(75deg);
-            animation: grid-travel 20s linear infinite;
-        }
+body{
+  margin:0;
+  background:radial-gradient(circle at 50% 30%, #0b2a44, var(--bg));
+  color:#fff;
+  font-family:'Orbitron',sans-serif;
+  overflow:hidden;
+}
 
-        @keyframes grid-travel {
-            from { background-position: 0 0; }
-            to { background-position: 0 160px; }
-        }
+/* ===== SCENE ===== */
+.viewport{
+  position:relative;
+  height:60vh;
+  overflow:hidden;
+}
 
-        /* CHARACTER SYSTEM */
-        .character-container {
-            position: absolute;
-            bottom: 15%;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 10;
-            filter: drop-shadow(0 0 40px var(--neon-blue));
-            pointer-events: none;
-        }
+.cyber-floor{
+  position:absolute;
+  bottom:-60%;
+  left:-50%;
+  width:200%;
+  height:200%;
+  background:
+    linear-gradient(var(--neon) 1px, transparent 1px),
+    linear-gradient(90deg,var(--neon) 1px, transparent 1px);
+  background-size:80px 80px;
+  opacity:.15;
+  transform:rotateX(70deg);
+}
 
-        #samurai-sprite {
-            max-height: 52vh;
-            mix-blend-mode: screen; /* ПОВНІСТЮ ПРИБИРАЄ СІТКУ */
-            transition: transform 0.08s cubic-bezier(0.2, 0, 0.2, 1);
-            animation: breath 3s ease-in-out infinite;
-        }
+/* ===== HERO ===== */
+.hero-wrap{
+  position:absolute;
+  bottom:6%;
+  left:50%;
+  transform:translateX(-50%);
+  filter:drop-shadow(0 0 40px var(--neon));
+}
 
-        @keyframes breath {
-            0%, 100% { transform: scale(1) translateY(0); }
-            50% { transform: scale(1.03) translateY(-10px); }
-        }
+#hero{
+  height:52vh;
+  transition:transform .12s ease;
+  animation:idle 3s ease-in-out infinite;
+}
 
-        /* PARTICLE SYSTEM */
-        .spark {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: var(--neon-blue);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 50;
-            box-shadow: 0 0 10px var(--neon-blue);
-        }
+@keyframes idle{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-12px)}
+}
 
-        /* UI ENHANCEMENTS */
-        .glass-panel {
-            background: rgba(10, 10, 20, 0.7);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
-        }
+/* ===== TAP FX ===== */
+.tap-text{
+  position:absolute;
+  font-size:2.4rem;
+  font-weight:900;
+  color:var(--neon);
+  pointer-events:none;
+  animation:float .6s forwards;
+  text-shadow:0 0 20px var(--neon);
+}
 
-        .energy-glow {
-            box-shadow: 0 0 20px rgba(0, 210, 255, 0.6), inset 0 0 5px white;
-        }
+@keyframes float{
+  to{transform:translateY(-200px) scale(1.6);opacity:0}
+}
 
-        .tap-effect {
-            position: absolute;
-            color: var(--neon-blue);
-            font-weight: 900;
-            font-size: 2.5rem;
-            pointer-events: none;
-            animation: critical-hit 0.6s ease-out forwards;
-            text-shadow: 0 0 20px var(--neon-blue);
-            z-index: 100;
-        }
-
-        @keyframes critical-hit {
-            0% { transform: translateY(0) scale(1) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(-250px) scale(2) rotate(15deg); opacity: 0; }
-        }
-    </style>
+.spark{
+  position:absolute;
+  width:5px;height:5px;
+  background:var(--neon);
+  border-radius:50%;
+  box-shadow:0 0 10px var(--neon);
+  pointer-events:none;
+}
+</style>
 </head>
-<body class="flex flex-col h-screen">
 
-    <header class="p-6 flex justify-between items-start z-50">
-        <div>
-            <p class="text-[10px] uppercase tracking-[0.3em] text-blue-400/60 font-bold">Network Balance</p>
-            <div class="flex items-baseline gap-2">
-                <h1 id="balance" class="text-5xl font-black tracking-tighter italic">5,044,815</h1>
-                <span class="text-blue-500 font-black">MX</span>
-            </div>
-        </div>
-        <div class="text-right">
-            <div id="rank-badge" class="bg-blue-900/30 border border-blue-500/50 px-3 py-1 rounded-full text-[10px] font-bold text-blue-300">
-                STAGE 2: SAMURAI
-            </div>
-        </div>
-    </header>
+<body>
 
-    <main class="flex-1 relative">
-        <div class="viewport" id="click-zone">
-            <div class="world-grid"></div>
-            
-            <div class="character-container">
-                <img id="samurai-sprite" src="https://raw.githubusercontent.com/CUBERIONAI/Matisov-X/main/1770305168681.png" alt="Cyber Samurai">
-            </div>
-        </div>
+<header class="p-6 flex justify-between">
+  <div>
+    <div class="text-xs text-blue-400 uppercase tracking-widest">Network Balance</div>
+    <div class="text-5xl font-black italic">
+      <span id="bal">5,046,656</span>
+      <span class="text-blue-400 text-xl">MX</span>
+    </div>
+  </div>
+  <div class="px-4 py-1 border border-blue-400/40 rounded-full text-xs">
+    STAGE 2 — SAMURAI
+  </div>
+</header>
 
-        <div class="px-6 -mt-10 relative z-50">
-            <div class="glass-panel p-5 rounded-[2rem]">
-                <div class="flex justify-between items-center mb-3">
-                    <span class="text-[10px] font-black tracking-widest text-blue-400">⚡ CORE CAPACITOR</span>
-                    <span id="energy-val" class="text-sm font-bold">1000/1000</span>
-                </div>
-                <div class="h-4 bg-black/60 rounded-full border border-white/5 p-1">
-                    <div id="energy-bar" class="h-full rounded-full energy-glow bg-gradient-to-r from-cyan-400 to-blue-600 transition-all duration-300" style="width: 100%"></div>
-                </div>
-            </div>
-        </div>
-    </main>
+<main class="viewport" id="tapZone">
+  <div class="cyber-floor"></div>
 
-    <footer class="h-24 glass-panel mx-4 mb-6 rounded-[2.5rem] flex justify-around items-center">
-        <button class="flex flex-col items-center gap-1 group">
-            <div class="p-3 rounded-2xl group-active:scale-90 transition-transform">⚔️</div>
-            <span class="text-[9px] font-black text-blue-400 uppercase">Battle</span>
-        </button>
-        <button class="flex flex-col items-center gap-1 opacity-30">
-            <div class="p-3">💎</div>
-            <span class="text-[9px] font-black uppercase">Nodes</span>
-        </button>
-        <button class="flex flex-col items-center gap-1 opacity-30">
-            <div class="p-3">⚙️</div>
-            <span class="text-[9px] font-black uppercase">Augment</span>
-        </button>
-    </footer>
+  <div class="hero-wrap">
+    <img id="hero"
+     src="https://raw.githubusercontent.com/CUBERIONAI/Matisov-X-/ec2f8b52d25750ccb90f4afb2c2666c455b98407/IMG_20260205_104400_997_105248.jpg">
+  </div>
+</main>
 
-    <script>
-        const GameConfig = {
-            tapPower: 12,
-            maxEnergy: 1000,
-            regenRate: 3,
-            frames: [
-                "https://raw.githubusercontent.com/CUBERIONAI/Matisov-X/main/1770305168681.png",
-                "https://raw.githubusercontent.com/CUBERIONAI/Matisov-X/main/1770305191748.png",
-                "https://raw.githubusercontent.com/CUBERIONAI/Matisov-X/main/1770305246186.png",
-                "https://raw.githubusercontent.com/CUBERIONAI/Matisov-X/main/1770305263574.png"
-            ]
-        };
+<div class="px-6 -mt-10">
+  <div class="bg-black/60 backdrop-blur-xl rounded-3xl p-5 border border-white/10">
+    <div class="flex justify-between text-xs mb-2">
+      <span>⚡ Energy</span>
+      <span id="energyText">1000 / 1000</span>
+    </div>
+    <div class="h-3 bg-black rounded-full overflow-hidden">
+      <div id="energyBar" class="h-full bg-gradient-to-r from-cyan-400 to-blue-600"></div>
+    </div>
+  </div>
+</div>
 
-        let state = {
-            balance: parseInt(localStorage.getItem('mx_bal')) || 5044815,
-            energy: 1000,
-            frameIndex: 0
-        };
+<script>
+Telegram.WebApp.expand();
 
-        const nodes = {
-            balance: document.getElementById('balance'),
-            energyBar: document.getElementById('energy-bar'),
-            energyVal: document.getElementById('energy-val'),
-            sprite: document.getElementById('samurai-sprite'),
-            zone: document.getElementById('click-zone')
-        };
+const cfg={
+  tap:12,
+  maxE:1000,
+  regen:3
+};
 
-        // CORE ENGINE LOGIC
-        function init() {
-            window.Telegram.WebApp.expand();
-            window.Telegram.WebApp.enableClosingConfirmation();
-            
-            nodes.zone.addEventListener('touchstart', handleTap, {passive: false});
-            
-            setInterval(() => {
-                if(state.energy < GameConfig.maxEnergy) {
-                    state.energy = Math.min(GameConfig.maxEnergy, state.energy + GameConfig.regenRate);
-                    updateUI();
-                }
-            }, 1000);
-            
-            updateUI();
-        }
+let st={
+  bal:5046656,
+  e:1000
+};
 
-        function handleTap(e) {
-            e.preventDefault();
-            if (state.energy < GameConfig.tapPower) return;
+const hero=document.getElementById('hero');
+const zone=document.getElementById('tapZone');
 
-            const touch = e.touches[0];
-            
-            // Update State
-            state.balance += GameConfig.tapPower;
-            state.energy -= GameConfig.tapPower;
-            state.frameIndex = (state.frameIndex + 1) % GameConfig.frames.length;
+zone.addEventListener('touchstart',tap,{passive:false});
 
-            // Visuals
-            renderTapEffects(touch.clientX, touch.clientY);
-            animateSamurai();
-            
-            if(window.Telegram.WebApp.HapticFeedback) {
-                window.Telegram.WebApp.HapticFeedback.impactOccurred('heavy');
-            }
+function tap(e){
+  e.preventDefault();
+  if(st.e<cfg.tap)return;
 
-            updateUI();
-            localStorage.setItem('mx_bal', state.balance);
-        }
+  const t=e.touches[0];
+  st.e-=cfg.tap;
+  st.bal+=cfg.tap;
 
-        function animateSamurai() {
-            nodes.sprite.src = GameConfig.frames[state.frameIndex];
-            nodes.sprite.style.transform = "scale(0.85) rotate(-2deg) translateY(30px)";
-            setTimeout(() => {
-                nodes.sprite.style.transform = "scale(1) rotate(0deg) translateY(0)";
-            }, 70);
-        }
+  hero.style.transform="scale(.9) rotate(-3deg)";
+  setTimeout(()=>hero.style.transform="",120);
 
-        function renderTapEffects(x, y) {
-            // Popup Text
-            const p = document.createElement('div');
-            p.className = 'tap-effect';
-            p.style.left = `${x - 20}px`;
-            p.style.top = `${y - 50}px`;
-            p.innerText = `+${GameConfig.tapPower}`;
-            document.body.appendChild(p);
-            setTimeout(() => p.remove(), 600);
+  fx(t.clientX,t.clientY);
 
-            // Particles
-            for(let i=0; i<8; i++) {
-                createParticle(x, y);
-            }
-        }
+  Telegram.WebApp.HapticFeedback?.impactOccurred("medium");
+  ui();
+}
 
-        function createParticle(x, y) {
-            const part = document.createElement('div');
-            part.className = 'spark';
-            part.style.left = x + 'px';
-            part.style.top = y + 'px';
-            document.body.appendChild(part);
+function fx(x,y){
+  const txt=document.createElement('div');
+  txt.className='tap-text';
+  txt.style.left=x+'px';
+  txt.style.top=y+'px';
+  txt.textContent='+'+cfg.tap+' MX';
+  document.body.appendChild(txt);
+  setTimeout(()=>txt.remove(),600);
 
-            const destinationX = (Math.random() - 0.5) * 300;
-            const destinationY = (Math.random() - 0.5) * 300;
+  for(let i=0;i<8;i++){
+    const s=document.createElement('div');
+    s.className='spark';
+    s.style.left=x+'px';
+    s.style.top=y+'px';
+    document.body.appendChild(s);
 
-            part.animate([
-                { transform: 'translate(0, 0)', opacity: 1 },
-                { transform: `translate(${destinationX}px, ${destinationY}px)`, opacity: 0 }
-            ], { duration: 400 + Math.random() * 400, easing: 'ease-out' }).onfinish = () => part.remove();
-        }
+    const dx=(Math.random()-.5)*300;
+    const dy=(Math.random()-.5)*300;
+    s.animate([
+      {transform:'translate(0,0)',opacity:1},
+      {transform:`translate(${dx}px,${dy}px)`,opacity:0}
+    ],{duration:500}).onfinish=()=>s.remove();
+  }
+}
 
-        function updateUI() {
-            nodes.balance.innerText = state.balance.toLocaleString();
-            nodes.energyVal.innerText = `${state.energy}/${GameConfig.maxEnergy}`;
-            nodes.energyBar.style.width = `${(state.energy / GameConfig.maxEnergy) * 100}%`;
-        }
+setInterval(()=>{
+  if(st.e<cfg.maxE){
+    st.e=Math.min(cfg.maxE,st.e+cfg.regen);
+    ui();
+  }
+},1000);
 
-        init();
-    </script>
+function ui(){
+  bal.textContent=st.bal.toLocaleString();
+  energyText.textContent=`${st.e} / ${cfg.maxE}`;
+  energyBar.style.width=(st.e/cfg.maxE*100)+'%';
+}
+
+ui();
+</script>
+
 </body>
 </html>
