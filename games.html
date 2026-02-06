@@ -22,14 +22,47 @@ body{
   color:#fff;
   font-family:'Orbitron',sans-serif;
   overflow:hidden;
+  touch-action: manipulation;
+}
+
+/* ===== HEADER ===== */
+header{
+  position: relative;
+  width: 100%;
+  padding:1rem;
+  display:flex;
+  justify-between;
+  align-items:center;
+  z-index:50;
+}
+
+header h1{
+  font-size:1.5rem;
+  font-weight:900;
+  letter-spacing: 0.1em;
+  color: #00d2ff;
 }
 
 /* ===== SCENE ===== */
 .viewport{
   position:relative;
   height:60vh;
+  width:100%;
   overflow:hidden;
-  background:radial-gradient(circle at 50% 80%, #081a2f, #02040a 70%);
+}
+
+.cyber-floor{
+  position:absolute;
+  bottom:-60%;
+  left:-50%;
+  width:200%;
+  height:200%;
+  background:
+    linear-gradient(var(--neon) 1px, transparent 1px),
+    linear-gradient(90deg,var(--neon) 1px, transparent 1px);
+  background-size:80px 80px;
+  opacity:.15;
+  transform:rotateX(70deg);
 }
 
 /* ===== HERO ===== */
@@ -38,11 +71,12 @@ body{
   bottom:6%;
   left:50%;
   transform:translateX(-50%);
-  filter:drop-shadow(0 0 35px rgba(0,210,255,.45));
+  filter:drop-shadow(0 0 40px var(--neon));
 }
 
 #hero{
-  height:52vh;
+  height:45vh;
+  max-height:52vh;
   transition:transform .12s ease;
   animation:idle 3s ease-in-out infinite;
 }
@@ -55,7 +89,7 @@ body{
 /* ===== TAP FX ===== */
 .tap-text{
   position:absolute;
-  font-size:2.4rem;
+  font-size:2rem;
   font-weight:900;
   color:var(--neon);
   pointer-events:none;
@@ -75,51 +109,121 @@ body{
   box-shadow:0 0 10px var(--neon);
   pointer-events:none;
 }
+
+/* ===== ENERGY BAR ===== */
+.energy-container{
+  width:90%;
+  max-width:400px;
+  margin:1rem auto;
+  background:rgba(0,0,0,0.6);
+  border-radius:2rem;
+  padding:0.5rem;
+  border:1px solid rgba(255,255,255,0.1);
+}
+
+.energy-bar-bg{
+  width:100%;
+  height:12px;
+  background:#000;
+  border-radius:1rem;
+  overflow:hidden;
+}
+
+.energy-bar{
+  height:100%;
+  width:100%;
+  background:linear-gradient(to right, #0ff, #00d2ff);
+  transition: width 0.3s ease;
+}
+
+/* ===== FOOTER BUTTONS ===== */
+footer{
+  position:fixed;
+  bottom:1rem;
+  left:0;
+  width:100%;
+  display:flex;
+  justify-around;
+  z-index:50;
+}
+
+footer button{
+  font-size:0.85rem;
+  background:rgba(0,0,0,0.6);
+  border:1px solid rgba(0,210,255,0.3);
+  padding:0.5rem 1rem;
+  border-radius:1.5rem;
+  color:#00d2ff;
+  font-weight:700;
+  touch-action: manipulation;
+  transition: transform 0.1s ease;
+}
+
+footer button:active{
+  transform:scale(0.9);
+}
+
+/* RESPONSIVE */
+@media (max-width:480px){
+  header h1{font-size:1.2rem;}
+  .tap-text{font-size:1.5rem;}
+  #hero{height:38vh;}
+  footer button{font-size:0.75rem;padding:0.4rem 0.8rem;}
+}
 </style>
 </head>
 
 <body>
 
-<header class="p-6 flex justify-between">
+<header>
+  <h1>Matisov X</h1>
   <div>
-    <div class="text-xs text-blue-400 uppercase tracking-widest">Network Balance</div>
-    <div class="text-5xl font-black italic">
+    <div class="text-xs text-blue-400 uppercase tracking-widest">Balance</div>
+    <div class="text-2xl font-black italic">
       <span id="bal">5,046,656</span>
-      <span class="text-blue-400 text-xl">MX</span>
+      <span class="text-blue-400 text-lg">MX</span>
     </div>
-  </div>
-  <div class="px-4 py-1 border border-blue-400/40 rounded-full text-xs">
-    STAGE 2 — SAMURAI
   </div>
 </header>
 
 <main class="viewport" id="tapZone">
+  <div class="cyber-floor"></div>
+
   <div class="hero-wrap">
-    <img
-      id="hero"
-      src="https://raw.githubusercontent.com/CUBERIONAI/Matisov-X/main/file_0000000008b471f48ebdb6f35b1b1a5a.png"
-      alt="Hero">
+    <img id="hero"
+     src="https://raw.githubusercontent.com/CUBERIONAI/Matisov-X/main/file_0000000008b471f48ebdb6f35b1b1a5a.png">
   </div>
 </main>
 
-<div class="px-6 -mt-10">
-  <div class="bg-black/60 backdrop-blur-xl rounded-3xl p-5 border border-white/10">
-    <div class="flex justify-between text-xs mb-2">
-      <span>⚡ Energy</span>
-      <span id="energyText">1000 / 1000</span>
-    </div>
-    <div class="h-3 bg-black rounded-full overflow-hidden">
-      <div id="energyBar" class="h-full bg-gradient-to-r from-cyan-400 to-blue-600"></div>
-    </div>
+<div class="energy-container">
+  <div class="flex justify-between text-xs mb-1">
+    <span>⚡ Energy</span>
+    <span id="energyText">1000 / 1000</span>
+  </div>
+  <div class="energy-bar-bg">
+    <div id="energyBar" class="energy-bar"></div>
   </div>
 </div>
+
+<footer>
+  <button>⚔️ Battle</button>
+  <button>💎 Nodes</button>
+  <button>⚙️ Upgrade</button>
+</footer>
 
 <script>
 Telegram.WebApp.expand();
 
-const cfg={ tap:12, maxE:1000, regen:3 };
+const cfg={
+  tap:12,
+  maxE:1000,
+  regen:3
+};
 
-let st={ bal:5046656, e:1000 };
+let st={
+  bal:5046656,
+  e:1000
+};
 
 const hero=document.getElementById('hero');
 const zone=document.getElementById('tapZone');
@@ -134,10 +238,11 @@ function tap(e){
   st.e-=cfg.tap;
   st.bal+=cfg.tap;
 
-  hero.style.transform="scale(.92) rotate(-3deg)";
+  hero.style.transform="scale(.9) rotate(-3deg)";
   setTimeout(()=>hero.style.transform="",120);
 
   fx(t.clientX,t.clientY);
+
   Telegram.WebApp.HapticFeedback?.impactOccurred("medium");
   ui();
 }
