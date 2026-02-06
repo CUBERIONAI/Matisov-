@@ -29,20 +29,7 @@ body{
   position:relative;
   height:60vh;
   overflow:hidden;
-}
-
-.cyber-floor{
-  position:absolute;
-  bottom:-60%;
-  left:-50%;
-  width:200%;
-  height:200%;
-  background:
-    linear-gradient(var(--neon) 1px, transparent 1px),
-    linear-gradient(90deg,var(--neon) 1px, transparent 1px);
-  background-size:80px 80px;
-  opacity:.15;
-  transform:rotateX(70deg);
+  background:radial-gradient(circle at 50% 80%, #081a2f, #02040a 70%);
 }
 
 /* ===== HERO ===== */
@@ -51,7 +38,7 @@ body{
   bottom:6%;
   left:50%;
   transform:translateX(-50%);
-  filter:drop-shadow(0 0 40px var(--neon));
+  filter:drop-shadow(0 0 35px rgba(0,210,255,.45));
 }
 
 #hero{
@@ -107,8 +94,6 @@ body{
 </header>
 
 <main class="viewport" id="tapZone">
-  <div class="cyber-floor"></div>
-
   <div class="hero-wrap">
     <img id="hero"
      src="https://raw.githubusercontent.com/CUBERIONAI/Matisov-X-/ec2f8b52d25750ccb90f4afb2c2666c455b98407/IMG_20260205_104400_997_105248.jpg">
@@ -154,7 +139,7 @@ function tap(e){
   st.e-=cfg.tap;
   st.bal+=cfg.tap;
 
-  hero.style.transform="scale(.9) rotate(-3deg)";
+  hero.style.transform="scale(.92) rotate(-3deg)";
   setTimeout(()=>hero.style.transform="",120);
 
   fx(t.clientX,t.clientY);
@@ -205,4 +190,4 @@ ui();
 </script>
 
 </body>
-</html>
+  </html>
