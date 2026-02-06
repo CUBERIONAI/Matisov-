@@ -3,199 +3,190 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Matisov X</title>
+<title>Matisov X — Cyber Samurai</title>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="https://cdn.tailwindcss.com"></script>
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+
+:root{
+  --neon:#00d2ff;
+  --bg:#02040a;
+}
 body{
   margin:0;
-  background:radial-gradient(circle at 50% 30%, #0b2a44, #02040a);
+  background:radial-gradient(circle at 50% 30%, #0b2a44, var(--bg));
   color:#fff;
   font-family:'Orbitron',sans-serif;
   overflow:hidden;
 }
-.viewport{height:60vh;position:relative;}
-.hero{height:52vh;filter:drop-shadow(0 0 40px #00d2ff);animation:idle 3s ease-in-out infinite;}
-@keyframes idle{50%{transform:translateY(-12px)}}
-.tap-text{position:absolute;font-size:2rem;font-weight:900;color:#00d2ff;pointer-events:none;animation:float .6s forwards;}
-@keyframes float{to{transform:translateY(-200px);opacity:0}}
-.menu{position:fixed;inset:0;background:#02040af0;z-index:100;display:none;}
-.menu-box{background:#000;border:1px solid #00d2ff55;border-radius:20px;padding:20px;max-width:420px;margin:auto;margin-top:10vh;}
-button{background:#00d2ff;color:#000;padding:10px 14px;border-radius:12px;font-weight:900;}
-.task{border:1px solid #00d2ff44;padding:10px;border-radius:12px;margin-bottom:10px;}
+.viewport{position:relative;height:60vh;overflow:hidden}
+.cyber-floor{
+  position:absolute;bottom:-60%;left:-50%;width:200%;height:200%;
+  background:
+    linear-gradient(var(--neon) 1px, transparent 1px),
+    linear-gradient(90deg,var(--neon) 1px, transparent 1px);
+  background-size:80px 80px;opacity:.15;transform:rotateX(70deg)
+}
+.hero-wrap{position:absolute;bottom:6%;left:50%;transform:translateX(-50%);filter:drop-shadow(0 0 40px var(--neon))}
+#hero{height:52vh;animation:idle 3s ease-in-out infinite}
+@keyframes idle{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+
+.tap-text{
+  position:absolute;font-size:2rem;font-weight:900;color:var(--neon);
+  pointer-events:none;animation:float .6s forwards;text-shadow:0 0 20px var(--neon)
+}
+@keyframes float{to{transform:translateY(-180px) scale(1.4);opacity:0}}
+
+.menu-panel{
+  position:absolute;top:8%;left:50%;transform:translateX(-50%);
+  width:92%;max-width:420px;background:rgba(10,10,20,.92);
+  backdrop-filter:blur(15px);border-radius:2rem;padding:1.4rem;
+  display:none;flex-direction:column;z-index:100
+}
+.menu-header{text-align:center;font-size:1.4rem;font-weight:900;margin-bottom:1rem}
+.row{display:flex;justify-content:space-between;align-items:center;margin-bottom:.7rem}
+.row button{background:#00d2ff22;border:none;padding:.4rem .8rem;border-radius:.7rem;font-weight:700}
+.close-menu{position:absolute;top:.8rem;right:.8rem;width:28px;height:28px;border-radius:50%;border:none;background:#ffffff22}
 </style>
 </head>
 
 <body>
-
-<header class="p-6 flex justify-between">
-  <div>
-    <div class="text-xs text-blue-400">BALANCE</div>
-    <div class="text-4xl font-black">
-      <span id="bal">0</span> MX
-    </div>
-  </div>
-  <button onclick="openMenu()">MENU</button>
+<header class="p-6 flex justify-between items-center">
+  <div class="text-2xl font-black">Matisov X</div>
+  <div class="px-4 py-1 border border-cyan-400/40 rounded-full text-xs">STAGE 1</div>
 </header>
 
-<main class="viewport" id="zone">
-  <div style="text-align:center">
-    <img class="hero" id="hero" src="https://raw.githubusercontent.com/CUBERIONAI/Matisov-X/main/file_0000000008b471f48ebdb6f35b1b1a5a.png">
+<main class="viewport" id="tapZone">
+  <div class="cyber-floor"></div>
+  <div class="hero-wrap">
+    <img id="hero" src="https://raw.githubusercontent.com/CUBERIONAI/Matisov-X/main/file_0000000008b471f48ebdb6f35b1b1a5a.png">
   </div>
 </main>
 
-<div class="px-6">
-  <div class="bg-black/70 rounded-2xl p-4">
-    <div class="flex justify-between text-sm">
-      <span>Energy</span>
-      <span id="energyTxt"></span>
+<div class="px-6 -mt-10">
+  <div class="bg-black/60 rounded-3xl p-5 border border-white/10">
+    <div class="flex justify-between text-xs mb-2">
+      <span>⚡ Energy</span>
+      <span id="energyText"></span>
     </div>
     <div class="h-3 bg-black rounded-full overflow-hidden">
-      <div id="energyBar" class="h-full bg-cyan-400"></div>
+      <div id="energyBar" class="h-full bg-gradient-to-r from-cyan-400 to-blue-600"></div>
     </div>
   </div>
 </div>
 
+<div class="px-6 mt-4 text-xl font-bold flex justify-between">
+  <span>Balance</span>
+  <span id="bal">0</span>
+</div>
+
+<div class="px-6 mt-4">
+  <button id="menuBtn" class="w-full py-2 rounded-2xl bg-blue-700 font-bold">MENU</button>
+</div>
+
 <!-- MENU -->
-<div class="menu" id="menu">
-  <div class="menu-box">
-    <div class="flex justify-between mb-4">
-      <b>MENU</b>
-      <button onclick="closeMenu()">X</button>
-    </div>
+<div class="menu-panel" id="menu">
+  <button class="close-menu" onclick="menu.style.display='none'">✕</button>
+  <div class="menu-header">USER MENU</div>
 
-    <h3>UPGRADES</h3>
-    <p>Tap Power Lv.<span id="tapLv"></span></p>
-    <button onclick="upgradeTap()">Upgrade Tap</button>
+  <div class="row"><span>Tap Level</span><button onclick="upgradeTap()">Upgrade</button></div>
+  <div class="row"><span>Energy Level</span><button onclick="upgradeEnergy()">Upgrade</button></div>
 
-    <p class="mt-2">Energy Core Lv.<span id="energyLv"></span></p>
-    <button onclick="upgradeEnergy()">Upgrade Energy</button>
+  <hr class="my-2 opacity-20">
 
-    <hr class="my-4">
-
-    <h3>TASKS</h3>
-
-    <div class="task">
-      Telegram Channel +3,000,000 MX  
-      <button onclick="task('tg')">Claim</button>
-    </div>
-
-    <div class="task">
-      Telegram Chat +2,000,000 MX  
-      <button onclick="task('chat')">Claim</button>
-    </div>
-
-    <div class="task">
-      YouTube +2,000,000 MX  
-      <button onclick="task('yt')">Claim</button>
-    </div>
-
-    <div class="task">
-      Instagram +1,000,000 MX  
-      <button onclick="task('ig')">Claim</button>
-    </div>
-
-    <div class="task">
-      X (Twitter) +2,000,000 MX  
-      <button onclick="task('x')">Claim</button>
-    </div>
-
-  </div>
+  <div class="row"><span>Telegram Channel</span><button onclick="subReward('tg','https://t.me/Matisov_X',3000000)">+3M</button></div>
+  <div class="row"><span>Telegram Chat</span><button onclick="subReward('chat','https://t.me/MatisovX',2000000)">+2M</button></div>
+  <div class="row"><span>YouTube</span><button onclick="subReward('yt','https://youtube.com/@MatisovX',2000000)">+2M</button></div>
+  <div class="row"><span>Instagram</span><button onclick="subReward('insta','https://instagram.com/matisov.x',1000000)">+1M</button></div>
+  <div class="row"><span>X (Twitter)</span><button onclick="subReward('x','https://x.com/matisovx',2000000)">+2M</button></div>
 </div>
 
 <script>
 Telegram.WebApp.expand();
 
-const save=k=>JSON.parse(localStorage.getItem(k));
-const store=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
-
-let state=save("mx")||{
-  bal:0,
-  energy:1000,
+/* CONFIG */
+let cfg={
   tap:1,
-  tapLv:1,
-  energyLv:1,
-  tasks:{}
+  maxE:100,
+  regen:3
 };
 
-function ui(){
-  bal.textContent=state.bal.toLocaleString();
-  energyTxt.textContent=`${state.energy}/1000`;
-  energyBar.style.width=(state.energy/1000*100)+"%";
-  tapLv.textContent=state.tapLv;
-  energyLv.textContent=state.energyLv;
-}
-ui();
+/* STATE */
+let st={
+  bal: Number(localStorage.getItem('mx_bal')) || 0,
+  e: cfg.maxE,
+  tapLvl: Number(localStorage.getItem('tapLvl')) || 1,
+  energyLvl: Number(localStorage.getItem('energyLvl')) || 1,
+  rewards: JSON.parse(localStorage.getItem('rewards')||'{}')
+};
 
-zone.addEventListener("touchstart",tap,{passive:false});
-function tap(e){
-  e.preventDefault();
-  if(state.energy<1)return;
-  state.energy--;
-  state.bal+=state.tap;
-  fx(e.touches[0].clientX,e.touches[0].clientY);
-  store("mx",state);
-  ui();
-}
+/* UI */
+const bal=document.getElementById('bal');
+const energyText=document.getElementById('energyText');
+const energyBar=document.getElementById('energyBar');
+const menu=document.getElementById('menu');
 
-function fx(x,y){
-  const t=document.createElement("div");
-  t.className="tap-text";
-  t.style.left=x+"px";
-  t.style.top=y+"px";
-  t.textContent="+"+state.tap;
-  document.body.appendChild(t);
-  setTimeout(()=>t.remove(),600);
-}
+/* TAP */
+tapZone.onclick=e=>{
+  if(st.e<cfg.tap) return;
+  st.bal+=cfg.tap;
+  st.e-=cfg.tap;
+  save();update();
+};
 
-setInterval(()=>{
-  if(state.energy<1000){
-    state.energy+=3;
-    ui();
-  }
-},1000);
+/* ENERGY */
+setInterval(()=>{if(st.e<cfg.maxE){st.e+=cfg.regen;update()}},1000);
 
-function openMenu(){menu.style.display="block";}
-function closeMenu(){menu.style.display="none";}
-
+/* UPGRADES */
 function upgradeTap(){
-  let cost=state.tapLv<3?5000:1000000*state.tapLv;
-  if(state.bal<cost)return alert("Not enough MX");
-  state.bal-=cost;
-  state.tapLv++;
-  state.tap+=1;
-  store("mx",state);
-  ui();
+  let cost=st.tapLvl<3?st.tapLvl*100:st.tapLvl*1000000;
+  if(st.bal>=cost){
+    st.bal-=cost;
+    st.tapLvl++;
+    cfg.tap++;
+    save();update();
+  }
 }
-
 function upgradeEnergy(){
-  let cost=state.energyLv<3?5000:1000000*state.energyLv;
-  if(state.bal<cost)return alert("Not enough MX");
-  state.bal-=cost;
-  state.energyLv++;
-  state.energy+=200;
-  store("mx",state);
-  ui();
+  let cost=st.energyLvl<3?st.energyLvl*200:st.energyLvl*1000000;
+  if(st.bal>=cost){
+    st.bal-=cost;
+    st.energyLvl++;
+    cfg.maxE+=50;
+    st.e=cfg.maxE;
+    save();update();
+  }
 }
 
-function task(id){
-  if(state.tasks[id])return alert("Already claimed");
-  let reward={
-    tg:3000000,
-    chat:2000000,
-    yt:2000000,
-    ig:1000000,
-    x:2000000
-  }[id];
-  state.bal+=reward;
-  state.tasks[id]=true;
-  store("mx",state);
-  ui();
+/* SUB REWARDS */
+function subReward(key,url,amount){
+  if(st.rewards[key]) return alert('Already claimed');
+  window.open(url,'_blank');
+  st.rewards[key]=true;
+  st.bal+=amount;
+  save();update();
 }
+
+/* SAVE */
+function save(){
+  localStorage.setItem('mx_bal',st.bal);
+  localStorage.setItem('tapLvl',st.tapLvl);
+  localStorage.setItem('energyLvl',st.energyLvl);
+  localStorage.setItem('rewards',JSON.stringify(st.rewards));
+}
+
+/* UI UPDATE */
+function update(){
+  bal.textContent=st.bal.toLocaleString();
+  energyText.textContent=`${st.e} / ${cfg.maxE}`;
+  energyBar.style.width=(st.e/cfg.maxE*100)+'%';
+}
+
+menuBtn.onclick=()=>menu.style.display='flex';
+update();
 </script>
-
 </body>
 </html>
