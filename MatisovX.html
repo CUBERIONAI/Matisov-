@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Matisov X — Cyber Samurai</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+
+:root{
+  --neon:#00d2ff;
+  --bg:#02040a;
+}
+
+body{
+  margin:0;
+  background:radial-gradient(circle at 50% 30%, #0b2a44, var(--bg));
+  color:#fff;
+  font-family:'Orbitron',sans-serif;
+  overflow:hidden;
+}
+
+/* ===== SCENE ===== */
+.viewport{
+  position:relative;
+  height:60vh;
+  overflow:hidden;
+}
+
+.cyber-floor{
+  position:absolute;
+  bottom:-60%;
+  left:-50%;
+  width:200%;
+  height:200%;
+  background:
+    linear-gradient(var(--neon) 1px, transparent 1px),
+    linear-gradient(90deg,var(--neon) 1px, transparent 1px);
+  background-size:80px 80px;
+  opacity:.15;
+  transform:rotateX(70deg);
+}
+
+/* ===== HERO ===== */
+.hero-wrap{
+  position:absolute;
+  bottom:6%;
+  left:50%;
+  transform:translateX(-50%);
+  filter:drop-shadow(0 0 40px var(--neon));
+}
+
+#hero{
+  height:52vh;
+  transition:transform .12s ease;
+  animation:idle 3s ease-in-out infinite;
+}
+
+@keyframes idle{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-12px)}
+}
+
+/* ===== TAP FX ===== */
+.tap-text{
+  position:absolute;
+  font-size:2.4rem;
+  font-weight:900;
+  color:var(--neon);
+  pointer-events:none;
+  animation:float .6s forwards;
+  text-shadow:0 0 20px var(--neon);
+}
+
+@keyframes float{
+  to{transform:translateY(-200px) scale(1.6);opacity:0}
+}
+
+.spark{
+  position:absolute;
+  width:5px;height:5px;
+  background:var(--neon);
+  border-radius:50%;
+  box-shadow:0 0 10px var(--neon);
+  pointer-events:none;
+}
+
+/* ===== MENU / UPGRADE PANEL ===== */
+.menu-panel{
+  position:fixed;
+  top:10%;
+  left:50%;
+  transform:translateX(-50%);
+  background:rgba(0,0,0,0.8);
+  backdrop-filter:blur(20px);
+  padding:20px;
+  border-radius:20px;
+  display:none;
+  z-index:100;
+  width:90%;
+  max-width:400px;
+}
+
+.menu-panel h2{
+  text-align:center;
+  margin-bottom:15px;
+  font-size:1.5rem;
+  text-transform:uppercase;
+  color:var(--neon);
+}
+
+.menu-btn{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:10px;
+  padding:10px;
+  background:#111;
+  border:1px solid rgba(0,210,255,0.3);
+  border-radius:10px;
+  cursor:pointer;
+  font-size:0.9rem;
+}
+
+.menu-btn span{
+  font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+<header class="p-6 flex justify-between items-center">
+  <div>
+    <div class="text-xs text-blue-400 uppercase tracking-widest">Matisov X</div>
+    <div class="text-5xl font-black italic">
+      <span id="bal">0</span>
+      <span class="text-blue-400 text-xl">MX</span>
+    </div>
+  </div>
+  <div id="menuToggle" class="px-4 py-1 border border-blue-400/40 rounded-full text-xs cursor-pointer">
+    MENU
+  </div>
+</header>
+
+<main class="viewport" id="tapZone">
+  <div class="cyber-floor"></div>
+  <div class="hero-wrap">
+    <img id="hero"
+     src="https://raw.githubusercontent.com/CUBERIONAI/Matisov-X/main/file_0000000008b471f48ebdb6f35b1b1a5a.png">
+  </div>
+</main>
+
+<div class="px-6 -mt-10">
+  <div class="bg-black/60 backdrop-blur-xl rounded-3xl p-5 border border-white/10">
+    <div class="flex justify-between text-xs mb-2">
+      <span>⚡ Energy</span>
+      <span id="energyText">100 / 100</span>
+    </div>
+    <div class="h-3 bg-black rounded-full overflow-hidden">
+      <div id="energyBar" class="h-full bg-gradient-to-r from-cyan-400 to-blue-600"></div>
+    </div>
+  </div>
+</div>
+
+<!-- UPGRADE PANEL -->
+<div class="menu-panel" id="menuPanel">
+  <h2>UPGRADES</h2>
+  <div class="menu-btn" data-type="tapPower">
+    <span>Tap Power</span>
+    <span id="tapPowerVal">1</span> MX
+  </div>
+  <div class="menu-btn" data-type="energyCap">
+    <span>Energy Cap</span>
+    <span id="energyCapVal">100</span>
+  </div>
+  <div class="menu-btn" data-type="aiBot">
+    <span>AI Bot</span>
+    <span id="aiBotVal">Locked</span>
+  </div>
+</div>
+
+<script>
+Telegram.WebApp.expand();
+
+// CONFIG
+const cfg={
+  baseTap:1,
+  maxEnergy:100,
+  regen:3,
+  tapCost:100, // for upgrade
+  aiBotCost:1000
+};
+
+// STATE
+let st={
+  bal:parseInt(localStorage.getItem('mx_bal'))||0,
+  energy:parseInt(localStorage.getItem('mx_energy'))||cfg.maxEnergy,
+  tapPower:parseInt(localStorage.getItem('mx_tapPower'))||cfg.baseTap,
+  energyCap:parseInt(localStorage.getItem('mx_energyCap'))||cfg.maxEnergy,
+  aiBot:false
+};
+
+// NODES
+const hero=document.getElementById('hero');
+const zone=document.getElementById('tapZone');
+const balNode=document.getElementById('bal');
+const energyText=document.getElementById('energyText');
+const energyBar=document.getElementById('energyBar');
+const menuPanel=document.getElementById('menuPanel');
+const menuToggle=document.getElementById('menuToggle');
+
+// INIT
+updateUI();
+
+// TAP HANDLER
+zone.addEventListener('touchstart',tap,{passive:false});
+zone.addEventListener('mousedown',tap);
+
+function tap(e){
+  e.preventDefault();
+  if(st.energy<st.tapPower)return;
+
+  const x=e.touches?e.touches[0].clientX:e.clientX;
+  const y=e.touches?e.touches[0].clientY:e.clientY;
+
+  st.energy-=st.tapPower;
+  st.bal+=st.tapPower;
+
+  // hero animation
+  hero.style.transform="scale(.9) rotate(-3deg)";
+  setTimeout(()=>hero.style.transform="",120);
+
+  fx(x,y);
+  saveState();
+  updateUI();
+}
+
+// TAP FX
+function fx(x,y){
+  const txt=document.createElement('div');
+  txt.className='tap-text';
+  txt.style.left=x+'px';
+  txt.style.top=y+'px';
+  txt.textContent='+'+st.tapPower;
+  document.body.appendChild(txt);
+  setTimeout(()=>txt.remove(),600);
+
+  for(let i=0;i<8;i++){
+    const s=document.createElement('div');
+    s.className='spark';
+    s.style.left=x+'px';
+    s.style.top=y+'px';
+    document.body.appendChild(s);
+
+    const dx=(Math.random()-.5)*300;
+    const dy=(Math.random()-.5)*300;
+    s.animate([
+      {transform:'translate(0,0)',opacity:1},
+      {transform:`translate(${dx}px,${dy}px)`,opacity:0}
+    ],{duration:500}).onfinish=()=>s.remove();
+  }
+}
+
+// ENERGY REGEN
+setInterval(()=>{
+  if(st.energy<st.energyCap){
+    st.energy=Math.min(st.energyCap,st.energy+cfg.regen);
+    updateUI();
+    saveState();
+  }
+},1000);
+
+// MENU TOGGLE
+menuToggle.addEventListener('click',()=>menuPanel.style.display=menuPanel.style.display==='block'?'none':'block');
+window.addEventListener('keydown',e=>{
+  if(e.key==='Escape')menuPanel.style.display='none';
+});
+
+// UPGRADE HANDLER
+menuPanel.querySelectorAll('.menu-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const type=btn.dataset.type;
+    if(type==='tapPower' && st.bal>=cfg.tapCost){
+      st.bal-=cfg.tapCost;
+      st.tapPower+=1;
+      document.getElementById('tapPowerVal').textContent=st.tapPower;
+    }
+    else if(type==='energyCap' && st.bal>=cfg.tapCost){
+      st.bal-=cfg.tapCost;
+      st.energyCap+=20;
+      document.getElementById('energyCapVal').textContent=st.energyCap;
+    }
+    else if(type==='aiBot' && st.bal>=cfg.aiBotCost){
+      st.bal-=cfg.aiBotCost;
+      st.aiBot=true;
+      document.getElementById('aiBotVal').textContent='Active';
+    }
+    updateUI();
+    saveState();
+  });
+});
+
+// UI
+function updateUI(){
+  balNode.textContent=st.bal.toLocaleString();
+  energyText.textContent=`${st.energy} / ${st.energyCap}`;
+  energyBar.style.width=(st.energy/st.energyCap*100)+'%';
+}
+
+// SAVE STATE
+function saveState(){
+  localStorage.setItem('mx_bal',st.bal);
+  localStorage.setItem('mx_energy',st.energy);
+  localStorage.setItem('mx_tapPower',st.tapPower);
+  localStorage.setItem('mx_energyCap',st.energyCap);
+}
+</script>
+</body>
+</html>
