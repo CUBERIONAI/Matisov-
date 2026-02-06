@@ -8,9 +8,11 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+
 :root{
   --neon:#00d2ff;
   --bg:#02040a;
+  --accent:#0ff;
 }
 body{
   margin:0;
@@ -19,204 +21,324 @@ body{
   font-family:'Orbitron',sans-serif;
   overflow:hidden;
 }
+
+/* ===== HEADER ===== */
 header{
-  display:flex;justify-content:space-between;padding:1.5rem;
+  display:flex; justify-content:space-between; align-items:center;
+  padding:1rem;
+  z-index:50;
+  position:relative;
 }
+#title{
+  font-size:1.5rem; font-weight:900; color:var(--neon);
+}
+#bal{
+  font-size:2rem; font-weight:700; margin-left:0.5rem;
+}
+#upgradeBtn{
+  padding:0.5rem 1rem; background:var(--neon)/20; border:1px solid var(--neon);
+  border-radius:1rem; cursor:pointer; transition:0.2s;
+}
+#upgradeBtn:hover{background:var(--neon)/40;}
+
+/* ===== SCENE ===== */
 .viewport{
-  position:relative;height:60vh;overflow:hidden;
+  position:relative;
+  height:60vh;
+  overflow:hidden;
 }
 .cyber-floor{
-  position:absolute;bottom:-60%;left:-50%;width:200%;height:200%;
+  position:absolute;
+  bottom:-60%;
+  left:-50%;
+  width:200%;
+  height:200%;
   background:
     linear-gradient(var(--neon) 1px, transparent 1px),
     linear-gradient(90deg,var(--neon) 1px, transparent 1px);
   background-size:80px 80px;
-  opacity:.15;transform:rotateX(70deg);
+  opacity:.15;
+  transform:rotateX(70deg);
 }
+
+/* ===== HERO ===== */
 .hero-wrap{
-  position:absolute;bottom:6%;left:50%;transform:translateX(-50%);
+  position:absolute;
+  bottom:6%;
+  left:50%;
+  transform:translateX(-50%);
   filter:drop-shadow(0 0 40px var(--neon));
 }
-#hero{height:52vh;transition:transform .12s ease;animation:idle 3s ease-in-out infinite;}
-@keyframes idle{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+#hero{
+  height:52vh;
+  transition:transform .12s ease;
+  animation:idle 3s ease-in-out infinite;
+}
+@keyframes idle{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-12px)}
+}
+
+/* ===== TAP FX ===== */
 .tap-text{
-  position:absolute;font-size:2.4rem;font-weight:900;color:var(--neon);
-  pointer-events:none;animation:float .6s forwards;text-shadow:0 0 20px var(--neon);
+  position:absolute;
+  font-size:2.4rem;
+  font-weight:900;
+  color:var(--neon);
+  pointer-events:none;
+  animation:float .6s forwards;
+  text-shadow:0 0 20px var(--neon);
 }
-@keyframes float{to{transform:translateY(-200px) scale(1.6);opacity:0}}
+@keyframes float{
+  to{transform:translateY(-200px) scale(1.6);opacity:0}
+}
 .spark{
-  position:absolute;width:5px;height:5px;background:var(--neon);
-  border-radius:50%;box-shadow:0 0 10px var(--neon);pointer-events:none;
+  position:absolute;
+  width:5px;height:5px;
+  background:var(--neon);
+  border-radius:50%;
+  box-shadow:0 0 10px var(--neon);
+  pointer-events:none;
 }
-.upgrade-panel{
-  position:fixed;bottom:5%;left:50%;transform:translateX(-50%);
-  background:rgba(0,0,0,0.7);backdrop-filter:blur(12px);
-  border:1px solid rgba(255,255,255,0.1);border-radius:1.5rem;
-  padding:1rem;width:90%;max-width:500px;
+
+/* ===== ENERGY BAR ===== */
+.energy-wrap{
+  padding:1rem;
 }
+.energy-bar{
+  height:1rem;
+  background:#000;
+  border-radius:999px;
+  overflow:hidden;
+}
+.energy-fill{
+  height:100%;
+  background:linear-gradient(to right, cyan, blue);
+  transition:width 0.3s;
+}
+
+/* ===== UPGRADE MENU ===== */
+#upgradeMenu{
+  position:fixed; top:0; left:0; width:100%; height:100%;
+  background:rgba(0,0,0,0.85);
+  display:none;
+  flex-direction:column;
+  z-index:100;
+  backdrop-filter:blur(10px);
+}
+.menu-header{
+  display:flex; justify-content:space-between; align-items:center;
+  padding:1rem; border-bottom:1px solid var(--neon);
+}
+.menu-title{font-size:1.2rem; font-weight:900;}
+.closeBtn{
+  cursor:pointer; font-size:1.2rem; padding:0.2rem 0.5rem; border:1px solid var(--neon); border-radius:0.5rem;
+  transition:0.2s;
+}
+.closeBtn:hover{background:var(--neon)/20;}
+.menu-tabs{
+  display:flex; justify-content:space-around; margin:1rem 0;
+}
+.tab{
+  padding:0.5rem 1rem; cursor:pointer; border-bottom:2px solid transparent;
+  transition:0.2s; font-weight:700;
+}
+.tab.active{border-color:var(--neon);}
+.tab-content{
+  flex:1;
+  padding:1rem;
+  display:none;
+  flex-direction:column;
+  gap:1rem;
+}
+.tab-content.active{display:flex;}
 .upgrade-btn{
-  background:rgba(0,210,255,0.2);border:1px solid var(--neon);
-  border-radius:1rem;padding:.5rem 1rem;margin:0.3rem;flex:1;
-  text-align:center;font-weight:700;color:#00d2ff;cursor:pointer;
+  padding:0.5rem 1rem; background:var(--neon)/20; border:1px solid var(--neon);
+  border-radius:0.5rem; cursor:pointer; transition:0.2s;
 }
-.upgrade-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.3rem;}
+.upgrade-btn:hover{background:var(--neon)/40;}
 </style>
 </head>
 <body>
 <header>
+  <div id="title">Matisov X</div>
   <div>
-    <div class="text-xs text-blue-400 uppercase tracking-widest">Matisov X — Network Balance</div>
-    <div class="text-5xl font-black italic">
-      <span id="bal">5,046,656</span>
-      <span class="text-blue-400 text-xl">MX</span>
-    </div>
-  </div>
-  <div class="px-4 py-1 border border-blue-400/40 rounded-full text-xs">
-    STAGE 2 — SAMURAI
+    <span id="bal">5,046,656</span> MX
+    <button id="upgradeBtn">Upgrade</button>
   </div>
 </header>
 
 <main class="viewport" id="tapZone">
   <div class="cyber-floor"></div>
   <div class="hero-wrap">
-    <img id="hero" src="https://raw.githubusercontent.com/CUBERIONAI/Matisov-X/main/file_0000000008b471f48ebdb6f35b1b1a5a.png">
+    <img id="hero"
+    src="https://raw.githubusercontent.com/CUBERIONAI/Matisov-X/main/file_0000000008b471f48ebdb6f35b1b1a5a.png">
   </div>
 </main>
 
-<div class="px-6 -mt-10">
-  <div class="bg-black/60 backdrop-blur-xl rounded-3xl p-5 border border-white/10">
-    <div class="flex justify-between text-xs mb-2">
-      <span>⚡ Energy</span>
-      <span id="energyText">1000 / 1000</span>
-    </div>
-    <div class="h-3 bg-black rounded-full overflow-hidden">
-      <div id="energyBar" class="h-full bg-gradient-to-r from-cyan-400 to-blue-600"></div>
-    </div>
-  </div>
+<div class="energy-wrap">
+  <div class="flex justify-between text-xs mb-1">⚡ Energy <span id="energyText">1000/1000</span></div>
+  <div class="energy-bar"><div id="energyFill" class="energy-fill" style="width:100%"></div></div>
 </div>
 
-<div class="upgrade-panel" id="upgradePanel">
-  <div class="upgrade-row">
-    <div>💪 Cyber Hands (Energy +)</div>
-    <div class="upgrade-btn" onclick="upgradeSkill('cyberHands')">Upgrade</div>
-    <div id="cyberHandsLvl">0/10</div>
+<!-- UPGRADE MENU -->
+<div id="upgradeMenu">
+  <div class="menu-header">
+    <div class="menu-title">Upgrade Menu</div>
+    <div class="closeBtn" id="closeMenu">Back</div>
   </div>
-  <div class="upgrade-row">
-    <div>⚔️ Sword Power (Tap +)</div>
-    <div class="upgrade-btn" onclick="upgradeSkill('swordPower')">Upgrade</div>
-    <div id="swordPowerLvl">0/10</div>
+  <div class="menu-tabs">
+    <div class="tab active" data-tab="energy">Energy</div>
+    <div class="tab" data-tab="sword">Sword</div>
+    <div class="tab" data-tab="ai">AI Magic</div>
+    <div class="tab" data-tab="blockchain">Blockchain</div>
   </div>
-  <div class="upgrade-row">
-    <div>✨ AI Magic (Multi Tap)</div>
-    <div class="upgrade-btn" onclick="upgradeSkill('aiMagic')">Upgrade</div>
-    <div id="aiMagicLvl">0/10</div>
+  <div class="tab-content active" id="energy">
+    <div>Energy Boost: <span id="levelEnergy">1</span> - Cost: <span id="costEnergy">500</span> MX
+      <button class="upgrade-btn" data-upgrade="energy">Upgrade</button>
+    </div>
   </div>
-  <div class="upgrade-row">
-    <div>🪙 Blockchain (Auto MX)</div>
-    <div class="upgrade-btn" onclick="upgradeSkill('blockchain')">Upgrade</div>
-    <div id="blockchainLvl">0/10</div>
+  <div class="tab-content" id="sword">
+    <div>Sword Power: <span id="levelSword">1</span> - Cost: <span id="costSword">800</span> MX
+      <button class="upgrade-btn" data-upgrade="sword">Upgrade</button>
+    </div>
+  </div>
+  <div class="tab-content" id="ai">
+    <div>AI Multitap: <span id="levelAI">1</span> - Cost: <span id="costAI">1200</span> MX
+      <button class="upgrade-btn" data-upgrade="ai">Upgrade</button>
+    </div>
+  </div>
+  <div class="tab-content" id="blockchain">
+    <div>Blockchain Eco: <span id="levelBC">1</span> - Cost: <span id="costBC">2000</span> MX
+      <button class="upgrade-btn" data-upgrade="blockchain">Upgrade</button>
+    </div>
   </div>
 </div>
 
 <script>
 Telegram.WebApp.expand();
 
-// Config
 const cfg={tap:12,maxE:1000,regen:3};
-
-// State
 let st={bal:5046656,e:1000};
-let upgrades={
-  cyberHands:{level:0,max:10,baseCost:100,energyBonus:10},
-  swordPower:{level:0,max:10,baseCost:150,tapBonus:12},
-  aiMagic:{level:0,max:10,baseCost:200,multiTap:true},
-  blockchain:{level:0,max:10,baseCost:500,autoMX:true}
-};
 
+// HERO TAP FX
 const hero=document.getElementById('hero');
 const zone=document.getElementById('tapZone');
-
 zone.addEventListener('touchstart',tap,{passive:false});
-zone.addEventListener('mousedown',tap,{passive:false}); // desktop click
+zone.addEventListener('mousedown',tap);
 
 function tap(e){
   e.preventDefault();
   if(st.e<cfg.tap)return;
-
-  const x=(e.touches)?e.touches[0].clientX:e.clientX;
-  const y=(e.touches)?e.touches[0].clientY:e.clientY;
-
-  st.e-=cfg.tap;
-  st.bal+=cfg.tap + (upgrades.swordPower.level*upgrades.swordPower.tapBonus);
-
-  // AI Magic Multi-Tap Chance
-  if(Math.random()<0.25 && upgrades.aiMagic.level>0){
-    st.bal+=cfg.tap*upgrades.aiMagic.level;
-  }
+  const x=(e.touches?e.touches[0].clientX:e.clientX);
+  const y=(e.touches?e.touches[0].clientY:e.clientY);
+  st.e-=cfg.tap; st.bal+=cfg.tap;
 
   hero.style.transform="scale(.9) rotate(-3deg)";
   setTimeout(()=>hero.style.transform="",120);
-
-  renderFX(x,y);
+  fx(x,y);
   Telegram.WebApp.HapticFeedback?.impactOccurred("medium");
   ui();
 }
 
-function renderFX(x,y){
+function fx(x,y){
   const txt=document.createElement('div');
-  txt.className='tap-text'; txt.style.left=x+'px'; txt.style.top=y+'px';
-  txt.textContent='+'+cfg.tap; document.body.appendChild(txt);
+  txt.className='tap-text';
+  txt.style.left=x+'px';
+  txt.style.top=y+'px';
+  txt.textContent='+'+cfg.tap+' MX';
+  document.body.appendChild(txt);
   setTimeout(()=>txt.remove(),600);
 
   for(let i=0;i<8;i++){
-    const s=document.createElement('div'); s.className='spark';
-    s.style.left=x+'px'; s.style.top=y+'px';
+    const s=document.createElement('div');
+    s.className='spark';
+    s.style.left=x+'px';
+    s.style.top=y+'px';
     document.body.appendChild(s);
+
     const dx=(Math.random()-.5)*300;
     const dy=(Math.random()-.5)*300;
     s.animate([{transform:'translate(0,0)',opacity:1},{transform:`translate(${dx}px,${dy}px)`,opacity:0}],{duration:500}).onfinish=()=>s.remove();
   }
 }
 
-function upgradeSkill(skill){
-  const s=upgrades[skill];
-  const cost=Math.floor(s.baseCost*Math.pow(1.5,s.level));
-  if(st.bal>=cost && s.level<s.max){
-    st.bal-=cost;
-    s.level++;
-    applyUpgrade(skill);
-    ui();
-  }
-}
-
-function applyUpgrade(skill){
-  switch(skill){
-    case 'cyberHands': cfg.maxE=1000 + upgrades.cyberHands.level*upgrades.cyberHands.energyBonus; break;
-    case 'swordPower': break;
-    case 'aiMagic': break;
-    case 'blockchain': break;
-  }
-}
-
+// ENERGY REGEN
 setInterval(()=>{
-  if(st.e<cfg.maxE){st.e=Math.min(cfg.maxE,st.e+cfg.regen);ui();}
-  // Blockchain Auto MX
-  if(upgrades.blockchain.level>0){
-    st.bal+=upgrades.blockchain.level*2; // +2 MX per sec per level
+  if(st.e<cfg.maxE){
+    st.e=Math.min(cfg.maxE,st.e+cfg.regen);
+    ui();
   }
 },1000);
 
+// UI UPDATE
 function ui(){
   document.getElementById('bal').textContent=st.bal.toLocaleString();
-  document.getElementById('energyText').textContent=`${st.e} / ${cfg.maxE}`;
-  document.getElementById('energyBar').style.width=(st.e/cfg.maxE*100)+'%';
-  document.getElementById('cyberHandsLvl').textContent=`${upgrades.cyberHands.level}/10`;
-  document.getElementById('swordPowerLvl').textContent=`${upgrades.swordPower.level}/10`;
-  document.getElementById('aiMagicLvl').textContent=`${upgrades.aiMagic.level}/10`;
-  document.getElementById('blockchainLvl').textContent=`${upgrades.blockchain.level}/10`;
+  document.getElementById('energyText').textContent=`${st.e}/${cfg.maxE}`;
+  document.getElementById('energyFill').style.width=(st.e/cfg.maxE*100)+'%';
+}
+ui();
+
+// UPGRADE SYSTEM
+const upgradeBtn=document.getElementById('upgradeBtn');
+const upgradeMenu=document.getElementById('upgradeMenu');
+const closeMenu=document.getElementById('closeMenu');
+
+upgradeBtn.addEventListener('click',()=>{upgradeMenu.style.display='flex';});
+closeMenu.addEventListener('click',()=>{upgradeMenu.style.display='none';});
+
+// TABS
+const tabs=document.querySelectorAll('.tab');
+const tabContents=document.querySelectorAll('.tab-content');
+tabs.forEach(t=>{
+  t.addEventListener('click',()=>{
+    tabs.forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    const target=t.dataset.tab;
+    tabContents.forEach(c=>c.classList.remove('active'));
+    document.getElementById(target).classList.add('active');
+  });
+});
+
+// UPGRADE LOGIC
+let upgrades={
+  energy:{level:1,cost:500},
+  sword:{level:1,cost:800},
+  ai:{level:1,cost:1200},
+  blockchain:{level:1,cost:2000}
+};
+
+document.querySelectorAll('.upgrade-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const type=btn.dataset.upgrade;
+    if(st.bal>=upgrades[type].cost){
+      st.bal-=upgrades[type].cost;
+      upgrades[type].level++;
+      
+      upgrades[type].cost=Math.floor(upgrades[type].cost*1.5);
+      // Apply effect
+      if(type==='energy') cfg.maxE+=50;
+      if(type==='sword') cfg.tap+=5;
+      if(type==='ai') cfg.tap+=2; // simple multitap bonus
+      if(type==='blockchain') st.bal+=100; // small passive bonus
+      updateUpgradeUI();
+      ui();
+    }else alert('Not enough MX!');
+  });
+});
+
+function updateUpgradeUI(){
+  document.getElementById('levelEnergy').textContent=upgrades.energy.level;
+  document.getElementById('costEnergy').textContent=upgrades.energy.cost;
+  document.getElementById('levelSword').textContent=upgrades.sword.level;
+  document.getElementById('costSword').textContent=upgrades.sword.cost;
+  document.getElementById('levelAI').textContent=upgrades.ai.level;
+  document.getElementById('costAI').textContent=upgrades.ai.cost;
+  document.getElementById('levelBC').textContent=upgrades.blockchain.level;
+  document.getElementById('costBC').textContent=upgrades.blockchain.cost;
 }
 
-ui();
+updateUpgradeUI();
 </script>
 </body>
-</html>
+</html>.
